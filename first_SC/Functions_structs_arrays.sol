@@ -1,47 +1,43 @@
- // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
  pragma solidity 0.8.8;
 
- contract More {
-     // by adding public keyword to a variable
-     // we're secretly adding a function that returns the value of that variable
-     uint256 public favNum;
+contract SimpleStorage {
+    // EVM can access and store information in six places:
 
-    // two keywords that notate when functions don't have to spend any gas when run "view" and "pure"
-    // view - read state from the contract
-    // pure - don't allow reading from the blockchain and modifications of state and 
-     function getFavNum() public view returns(uint256) {
-         return favNum;
+    // 1 Stack
+    // 2 Memory
+    // 3 Storage 
+    // 4 Calldata
+    // 5 Code
+    // 6 Logs
+
+    // calldata and memory means that variable exists only temporarly, duing the transaction when the function is called
+    // storage variable will exist outside, even after transaction execution
+    // without specifying, the variables are by default put into storage
+    // calldata is temporary and cannot be modified
+    // memory is temporary and can be modified
+    // storage is permament variables that can be modified
+
+    // arrays, structs and mappings are special. We need to tell solidity the data location of array, stucts and mappings
+    // string is an array of bytes. 
+
+    struct People {
+         string name; 
+         uint256 favoriteNumber; 
      }
 
-    // calling this function is free unless it is called inside other function that consumes gas.
-     function add() public pure returns(uint256) {
-         return(1 + 1);
-     }
+    People[] public people;
+    
+    // mapping is like a dictionary
+    mapping(string => uint256) public nameToFavNumber;
 
-     // we can create our own data structures
-     struct People {
-         // variables in a struct and within contract block get automatically indexed
-         string name; // i = 0
-         uint256 favoriteNumber; // i = 1
-     }
-
-     People public person = People({name: "Dawid", favoriteNumber: 7});
-
-     // arrays
-     uint256[] public numbers;
-
-     // empty brackets denote dynamic array, no limit on how many elements it can hold
-     People[] public people;
-
-     // [3] denotes that this array can hold only 3 people
-     People[3] public three_people;
-
-    // function of adding elements to array 
      function addPerson(string memory _name, uint256 _favoriteNumber) public{
          People memory anotherPerson = People({name: _name, favoriteNumber: _favoriteNumber});
          people.push(anotherPerson);
 
-         // altermative
-         // people.push(People(_name, _favoriteNumber));
-     }
- }
+         // adding entry to a dictionary // key _name has value _favoriteNumber
+         nameToFavNumber[_name] = _favoriteNumber;
+         
+    }
+
+}
