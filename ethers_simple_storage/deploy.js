@@ -7,36 +7,51 @@ async function main() {
 
     console.log(process.env.RPC_PROVIDER)
     const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_PROVIDER);
-    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+    // creating a wallet
+    // const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+
+    // creating a wallet from encrypted key
+    const encryptedJson = fs.readFileSync("./.encryptedKey.json", "utf8");
+    let wallet = new ethers.Wallet.fromEncryptedJsonSync(encryptedJson, process.env.PRIVATE_KEY_PASSWORD);
+    wallet = await wallet.connect(provider);
 
     const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.abi", "utf8");
     const binary = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.bin", "utf8");
 
     const contractFactory = new ethers.ContractFactory(abi, binary, wallet);
-    // console.log("Deploying please wait...");
 
+    // **** how to deploy with .deploy()
     // const contract = await contractFactory.deploy();
-    // console.log("********  DEPLOYMENT TRANSACTION ****************");
-    // console.log(contract);
-    const contract = contractFactory.attach('0x41ede30A956D49412d67ec2D12d3541c2a253423')
-        ;
-    const currentFavoriteNumber = await contract.retrieve();
 
-    // exprected behaviour every time we run the deploy.js currentFavorite number +1, meaning 21, 22, 23
-    // the actual behaviour 201 2011 20111 that's why toString 
-    await contract.store(20)
+    // get ahold of smart contract
+    const contract = contractFactory.attach('0x2c783Cd739cdAb6FC6fD93FbE9dAcFDADB1215D4');
+
+    // invoke store function defined on smart contract
+    // await contract.store(42)
+
+    // invoke retrieve function defined on smart contract
+    const currentFavoriteNumber = await contract.retrieve();
+    console.log("First retrieve: ", parseInt(currentFavoriteNumber));
+
+    // incrementing smart contracts' "favoriteNumber" field 
+    await contract.store(parseInt(currentFavoriteNumber) + 1);
+
+    // favoriteNumber on smart contract is of type uint256
     console.log("Favorite number: ", currentFavoriteNumber);
     console.log(typeof currentFavoriteNumber)
     console.log(currentFavoriteNumber.toString())
-    await contract.store(parseInt(currentFavoriteNumber) + 1)
-    const updatedNumber = await contract.retrieve()
-    console.log("Updated number", updatedNumber.toString());
+    // but the returned value of .retrieve() will be "BigNumber { _hex: '0x2c', _isBigNumber: true }" so we need to parseInt
 
+    // this is how we can get transaction receipt, we can also make it wait before the execution, so that we're sure the deployment transaction has been processed before trying to work with it.
     // const deploymentReceipt = await contract.deployTransaction.wait(1);
-    // // console.log("********  DEPLOYMENT TRANSACTION RECEIPT ****************");
-    // // console.log(deploymentReceipt);
+    // console.log(deploymentReceipt);
 
-    //*************** Deploying a smart contract by making a transaction */
+    // Different way of deploying smart contract (STANDARD). 
+    // First we use solc to compile the smart contract ".bin" file
+    // it's compiled to a binary format which can be executed on chain by Ethereum Virtual Machine.
+    // deploying a contract on a blockchain means signing and sending a blockchain transaction 
+    // with a "data" field taking as a value the compiled smart contract "contents of .bin"
+    //*************** Deploying a smart contract by making a transaction ****************/
     //     const nonce = await wallet.getTransactionCount();
 
     //     const tx = {
