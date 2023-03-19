@@ -15,6 +15,17 @@ async function main() {
     await verify(simpleStorage.address, []);
   }
 
+    // use 'retrieve' method defined in simpleStorage smart contract
+    const currentValue = await simpleStorage.retrieve()
+    console.log(`Current value: ${currentValue}`)
+  
+    // update current value of smart contract using store function defined in simpleStorage smart contract
+    const transactionResponse = await simpleStorage.store(5)
+    await transactionResponse.wait(1)
+  
+    const updatedValue = await simpleStorage.retrieve()
+    console.log(`Updated value: ${updatedValue}`)
+
 }
 
 async function verify(contractAddress, args) {
