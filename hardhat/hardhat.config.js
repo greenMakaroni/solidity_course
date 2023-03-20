@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-etherscan");
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config()
+require("./tasks/block-number")
 
 const ganache_url = process.env.GANACHE_URL;
 const pk = process.env.PRIVATE_KEY;
