@@ -26,6 +26,7 @@ async function main() {
     const updatedValue = await simpleStorage.retrieve()
     console.log(`Updated value: ${updatedValue}`)
 
+
 }
 
 async function verify(contractAddress, args) {

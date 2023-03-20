@@ -26,6 +26,23 @@ describe("SimpleStorage", () => {
 
     assert.equal(updatedValue.toString(), expectedValue)
   })
+
+  it("Should add a person to people array", async () => {
+
+    await simpleStorage.addPerson("Lmao", 15)
+    const person = await simpleStorage.people(0)
+    const expected = "15,Lmao"
+
+    assert.equal(person.toString(), expected)
+
+  })
+
+  it("Should retrieve favorite number", async () => {
+    const expected = "0"
+    const retrieved = await simpleStorage.retrieve()
+
+    assert.equal(retrieved.toString(), expected)
+  })
 })
 
 // we can run specific test by using

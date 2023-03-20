@@ -2,7 +2,13 @@ require("@nomiclabs/hardhat-etherscan");
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config()
 require("./tasks/block-number")
+
+// this hardhat plugin will give us all the info about gas usage
 require("hardhat-gas-reporter")
+
+// this hardhat plugin will check how many lines of code in our smart contract are not covered by tests
+// to run: npx hardhat coverage
+require("solidity-coverage")
 
 const ganache_url = process.env.GANACHE_URL;
 const pk = process.env.PRIVATE_KEY;
