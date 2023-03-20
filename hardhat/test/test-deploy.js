@@ -18,7 +18,7 @@ describe("SimpleStorage", () => {
     assert.equal(currentValue.toString(), expectedValue)
   })
 
-  it.only("favorite number should update when we call store", async () => {
+  it("favorite number should update when we call store", async () => {
     await simpleStorage.store("699")
 
     const updatedValue = await simpleStorage.retrieve()
